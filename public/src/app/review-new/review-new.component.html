@@ -1,0 +1,53 @@
+<div class="row">
+  <form (submit)="createReview()" class="col-md-6 offset-md-3">
+    <h2 class="display-4 display-5 mt-5 mb-4">Write a Review for {{resto.name}}</h2>
+    <div class="form-group">
+      <label>Your Name</label>
+      <input 
+        class="form-control"
+        type="text" 
+        name="name"
+        required 
+        minlength="3" 
+        [(ngModel)]="newReview.name"
+        #name="ngModel"
+        (change)="showErrors = false"
+      >
+      <!-- <div *ngIf="duplicatError.length > 0" class="small text-danger">{{duplicatError}}</div> -->
+      <div *ngIf="name.errors && (name.dirty || name.touched) || showErrors">
+        <div *ngIf="name.errors.required" class="small text-danger">Name must not be blank</div>
+        <div *ngIf="name.errors.minlength" class="small text-danger">Name must contain at least 3 characters</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Stars</label>
+      <select class="form-control" id="exampleFormControlSelect1" name="newReview.rating" [(ngModel)]="newReview.rating">
+        <option selected value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <div *ngIf="selectError.length > 0" class="small text-danger">{{selectError}}</div>
+    </div>
+    <div class="form-group">
+      <label>Your Review:</label>
+      <input 
+        class="form-control"
+        type="text" 
+        name="content"
+        required 
+        minlength="3" 
+        [(ngModel)]="newReview.content"
+        #content="ngModel"
+        (change)="showErrors = false"
+      >
+      <div *ngIf="content.errors && (content.dirty || content.touched) || showErrors">
+        <div *ngIf="content.errors.required" class="small text-danger">Review must not be blank</div>
+        <div *ngIf="content.errors.minlength" class="small text-danger">Review must contain at least 3 characters</div>
+      </div>
+    </div>
+    <a (click)="closeForm($event)" class="btn btn-danger mr-2 text-white">Cancel</a>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>

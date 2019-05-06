@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Let's eat</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="styles.css">
+  <!-- boots strap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <!-- google map -->
+  
+ 
+</head>
+<body >
+  <img src="assets/Flos-Clam-Shack-Contact-2-Slider.jpg" alt="restaurant_1440x311" height="400px">
+  
+  <app-root></app-root>
+  <script src="https://js.api.here.com/v3/3.0/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.0/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.0/mapsjs-places.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.0/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.0/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+
+  <!-- Google Maps scripts. -->
+  
+  <script >
+  var map, infoWindow;
+  function initMap(){
+      var options= { center: {lat: 37.335, lng:  -121.89 },
+                      // mapTypeId: 'terrain',
+                      zoom: 10}; 
+      map = new google.maps.Map(document.getElementById('map'), options);
+      
+      getCurrentLocation();
+      var input = document.getElementById('search');
+      var searchBox = new google.maps.places.SearchBox(input);
+      map.addListener('bounds_changed', function(){
+        searchBox.setBounds(map.getBounds());
+      });
+
+      var markers = [];
+
+          searchBox.addListener('places_changed', function(){
+          var places = searchBox.getPlaces();
+
+          if (places.length === 0) {
+            console.log('No results');
+            
+            return;
+          }
+
+          markers.forEach(function(m) { m.setMap(null);});
+          markers = [];
+
+          var bounds = new google.maps.LatLngBounds();
+          
+          places.forEach(function (p) {
+            // console.log('test here2', p);
+            if (!p.geometry)
+              return;
+            // markers.push(new google.maps.Marker({
+            //   map: map,
+            //   title: p.name,
+            //   position: p.geometry.location
+            // }));
+            markers.push(createMarker(p));
+            if (p.geometry.viewpoint){
+              bounds.union(p.geometry.viewpoint);
+            }
+            else  
+              bounds.extend(p.geometry.location);
+          });
+          map.fitBounds(bounds);
+        });
+      
+  }
+
+  function createMarker(place) {
+    var placeLoc = place.geometry.location;
+    // var placeLoc = place;
+    var marker = new google.maps.Marker({
+      map: map,
+      position: place.geometry.location
+    });
+
+    google.maps.event.addListener(marker, 'click', function(){
+      var open_now = 'closed';
+       if (place.opening_hours.open_now ){
+        open_now = 'open now';
+       }
+      infoWindow.setContent(place.name+', '+place.formatted_address+' '+open_now);
+      infoWindow.open(map,this);
+    });
+    return marker;
+  }
+  function getCurrentLocation(){
+    // console.log('test here');
+    infoWindow = new google.maps.InfoWindow;
+
+      if(navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (p){
+          var position = {
+          lat: p.coords.latitude,
+          lng:p.coords.longitude
+          };
+          console.log('Postion',position);
+          var marker = new google.maps.Marker({
+            position: position,
+            map: map
+          });
+          google.maps.event.addListener(marker, 'click', function()
+          {
+            infoWindow.setContent('<div >you are here</div>');
+            infoWindow.open(map,this);
+          })
+          infoWindow.setPosition(position);
+          infoWindow.setContent('<div >you are here</div>');
+          infoWindow.open(map);
+      }, function(){
+          handleLocationError('Geolocation service failed', map.center());
+      }
+      )
+      }else {
+      handleLocationError('No geolocation available', map.center());
+      }
+  }
+  function handleLocationError(content,position){
+      console.log('failed here');
+      infoWindow.setPosition(position);
+      infoWindow.setContent(content);
+      infoWindow.open(map);
+  }
+  </script>
+    
+
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBG-YGYBsrsKltj0duPAldMKHRnMrrszFA&callback=initMap&libraries=places">
+</script>
+<script type="text/javascript" src="runtime.js"></script><script type="text/javascript" src="polyfills.js"></script><script type="text/javascript" src="styles.js"></script><script type="text/javascript" src="vendor.js"></script><script type="text/javascript" src="main.js"></script></body>
+
+</html>

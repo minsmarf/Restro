@@ -1,0 +1,61 @@
+
+
+<div class="container" [ngClass]="{'display': !isFormVisible}">
+    
+    <!-- <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="place">Search Google place</label>
+              <input class="form-control" type="text" id="place" #search [formControl]="searchControl" autocomplete="off" autcapitalize="off"  spellcheck="off" />
+              <input class="form-control" type="text" value={{selectedAddress}}>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+              <agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom" [scrollwheel]="off" style="height:300px" >
+                <agm-marker *ngFor="let latlong of latlongs" [latitude]="latlong.latitude" [longitude]="latlong.longitude" (markerClick)="selectMarker($event)"
+                >
+    
+                </agm-marker>
+              </agm-map>
+            </div>
+        </div>
+    </div> -->
+  
+  <div class="row">
+    <div class="col-md-4">
+      
+      <!-- <a class="btn btn-primary text-white mt-3" (click)="toggleForm()">Add a User</a> -->
+      <!-- <a class="btn btn-success text-white mt-3" [routerLink]="['/restaurants', resto._id ,'review']">New Review</a> -->
+      <a class="btn btn-success text-white mt-3" [routerLink]="['review']" (click)="toggleForm()">New Review</a>
+    </div>
+    
+    <div class="col-md-6">
+      <h4 class="display-4 display-5"><small>Reviews for {{resto.name}}</small></h4>
+      <p class="d-inline p-2"> Average Rating: {{avgRate | number : '1.2'}}</p>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <h4 class="display-4 display-5"><small>Current Reviews:</small></h4>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Stars</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of resto.reviews">
+        <td>{{item.name}}</td>
+        <td>{{item.rating}}</td>
+        <td>{{item.content}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<app-review-new *ngIf="isFormVisible" [resto]="resto" (anEventEmitter)="dataFromChild($event)"></app-review-new>
